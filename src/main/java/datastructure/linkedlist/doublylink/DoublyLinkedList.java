@@ -1,23 +1,19 @@
 package datastructure.linkedlist.doublylink;
 
-// A generic, double-ended doubly linked list. Every link knows both its next and previous link,
-// and the list keeps pointers to the first link (head) and the last link (tail), so it can
-// add or remove at either end without walking the list. Null items are not allowed.
+// Double-ended doubly linked list, every link has a reference to the next and the previous link
 public class DoublyLinkedList<T> {
-    private int count;  // number of links, kept up to date so index checks don't need to walk the list
+    private int count;  // Number of links in the list
     private DoublyLink<T> head;
     private DoublyLink<T> tail;
 
-    // Time complexity: O(1), an empty list just has no links yet.
+    // O(1)
     public DoublyLinkedList() {
         this.count = 0;
         this.head = null;
         this.tail = null;
     }
 
-    // Returns the link at the given index, which must be in range. It starts from whichever
-    // end is closer.
-    // Time complexity: O(n), but at most n / 2 steps because it starts from the nearer end.
+    // O(n): Starts from whichever end is closer, so it takes at most n/2 steps
     private DoublyLink<T> traverseByIndex(int index) {
         DoublyLink<T> current;
         if (index < count / 2) {
@@ -34,32 +30,29 @@ public class DoublyLinkedList<T> {
         return current;
     }
 
-    // Returns the first item without removing it, or null if the list is empty.
-    // Time complexity: O(1), head points straight at the first link.
+    // O(1): Head is the first link
     public T peekFirst() {
         if (head == null) return null;
         return head.data;
     }
 
-    // Returns the last item without removing it, or null if the list is empty.
-    // Time complexity: O(1), tail points straight at the last link.
+    // O(1): Tail is the last link
     public T peekLast() {
         if (tail == null) return null;
         return tail.data;
     }
 
-    // Time complexity: O(1), it only checks the head and tail pointers.
+    // O(1)
     public boolean isEmpty() {
         return head == null && tail == null;
     }
 
-    // Returns the number of items in the list.
-    // Time complexity: O(1), count is updated on every insert and delete.
+    // O(1): count is updated on every insert and delete
     public int size() {
         return count;
     }
 
-    // Time complexity: O(1), the new link becomes the head and nothing else has to move.
+    // O(1): The new link just becomes the head
     public void insertFirst(T newItem) {
         if (newItem == null) {
             throw new NullPointerException("Item must not be null");
@@ -77,7 +70,7 @@ public class DoublyLinkedList<T> {
         count++;
     }
 
-    // Time complexity: O(1), the tail pointer lets us attach the new link without walking the list.
+    // O(1): The new link just becomes the tail
     public void insertLast(T newItem) {
         if (newItem == null) {
             throw new NullPointerException("Item must not be null");
@@ -95,9 +88,8 @@ public class DoublyLinkedList<T> {
         count++;
     }
 
-    // Inserts newItem so it ends up at the given index. index == size() adds it at the end.
-    // Throws IndexOutOfBoundsException if index is negative or greater than size().
-    // Time complexity: O(n), we walk to the link currently at index (from the nearer end).
+    // Best case O(1): Inserting at index 0 or at the end
+    // Worst case O(n): Walking to the index, from whichever end is closer
     public void insertAt(int index, T newItem) {
         if (newItem == null) {
             throw new NullPointerException("Item must not be null");
@@ -126,8 +118,7 @@ public class DoublyLinkedList<T> {
         count++;
     }
 
-    // Removes the first item. Returns false if the list is empty.
-    // Time complexity: O(1), head just moves to the second link.
+    // O(1): Head just moves to the next link
     public boolean deleteFirst() {
         if (head == null) return false;
 
@@ -145,8 +136,7 @@ public class DoublyLinkedList<T> {
         return true;
     }
 
-    // Removes the last item. Returns false if the list is empty.
-    // Time complexity: O(1), tail.previous gives us the new last link straight away.
+    // O(1): tail.previous is the new last link, so no walking is needed
     public boolean deleteLast() {
         if (head == null) return false;
 
@@ -164,8 +154,8 @@ public class DoublyLinkedList<T> {
         return true;
     }
 
-    // Removes the item at the given index. Returns false if index is out of range.
-    // Time complexity: O(n), we walk to the link at index (from the nearer end).
+    // Best case O(1): Deleting the first or the last link
+    // Worst case O(n): Walking to the index, from whichever end is closer
     public boolean deleteAt(int index) {
         if (index < 0 || index >= count) {
             return false;
@@ -186,8 +176,8 @@ public class DoublyLinkedList<T> {
         return true;
     }
 
-    // Removes the first link holding key. Returns false if key isn't in the list.
-    // Time complexity: O(n), we may have to check every link before finding key.
+    // Best case O(1): Key is at the head
+    // Worst case O(n): Key is at the end or not in the list
     public boolean deleteKey(T key) {
         if (key == null) {
             throw new NullPointerException("Key must not be null");
@@ -215,8 +205,8 @@ public class DoublyLinkedList<T> {
         return true;
     }
 
-    // Returns the index of the first link holding key, or -1 if it isn't in the list.
-    // Time complexity: O(n), we may have to check every link.
+    // Best case O(1): Key is at the head
+    // Worst case O(n): Key is at the end or not in the list
     public int find(T key) {
         if (key == null) {
             throw new NullPointerException("Key must not be null");
@@ -230,8 +220,7 @@ public class DoublyLinkedList<T> {
         return -1;
     }
 
-    // Returns the items from head to tail, for example "1 <-> 2 <-> 3".
-    // Time complexity: O(n), each link is visited once.
+    // O(n): Goes through every link once
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -247,8 +236,7 @@ public class DoublyLinkedList<T> {
         return sb.toString();
     }
 
-    // Prints the items from head to tail, for example "Displaying forward: Head [1 <-> 2 <-> 3] Tail".
-    // Time complexity: O(n), each link is visited once by following next.
+    // O(n): Follows next from the head to the tail
     public void displayForward() {
         DoublyLink<T> current = head;
         System.out.print("Displaying forward: Head [");
@@ -263,8 +251,7 @@ public class DoublyLinkedList<T> {
         System.out.println("] Tail");
     }
 
-    // Prints the items from tail to head, for example "Displaying backward: Tail [3 <-> 2 <-> 1] Head".
-    // Time complexity: O(n), each link is visited once by following previous.
+    // O(n): Follows previous from the tail to the head
     public void displayBackward() {
         DoublyLink<T> current = tail;
         System.out.print("Displaying backward: Tail [");
