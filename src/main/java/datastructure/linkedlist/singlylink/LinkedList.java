@@ -1,40 +1,50 @@
 package datastructure.linkedlist.singlylink;
 
-import java.util.Objects;
-
+// A generic, double-ended singly linked list. It keeps a pointer to the first link (head)
+// and the last link (tail), so adding at either end never has to walk the list.
+// Null items are not allowed.
 public class LinkedList<T> {
     private Link<T> head;
     private Link<T> tail;
-    private int count;
+    private int count;  // number of links, kept up to date so index checks don't need to walk the list
 
+    // Time complexity: O(1), an empty list just has no links yet.
     public LinkedList() {
         this.head = null;
         this.tail = null;
         this.count = 0;
     }
 
+    // Returns the first item without removing it, or null if the list is empty.
+    // Time complexity: O(1), head points straight at the first link.
     public T peekFirst() {
         if (head == null) return null;
         return head.data;
     }
 
+    // Returns the last item without removing it, or null if the list is empty.
+    // Time complexity: O(1), tail points straight at the last link.
     public T peekLast() {
         if (tail == null) return null;
         return tail.data;
     }
 
-    // Time Complexity: O(1)
+    // Time complexity: O(1), it only checks the head and tail pointers.
     public boolean isEmpty() {
         return head == null && tail == null;
     }
 
+    // Returns the number of items in the list.
+    // Time complexity: O(1), count is updated on every insert and delete.
     public int size() {
         return count;
     }
 
-    // Time Complexity: O(1)
+    // Time complexity: O(1), the new link becomes the head and nothing else has to move.
     public void insertFirst(T newItem) {
-        Objects.requireNonNull(newItem, "Item must not be null");
+        if (newItem == null) {
+            throw new NullPointerException("Item must not be null");
+        }
 
         head = new Link<>(newItem, head);
 
@@ -44,9 +54,11 @@ public class LinkedList<T> {
         count++;
     }
 
-    // Time Complexity: O(1)
+    // Time complexity: O(1), the tail pointer lets us attach the new link without walking the list.
     public void insertLast(T newItem) {
-        Objects.requireNonNull(newItem, "Item must not be null");
+        if (newItem == null) {
+            throw new NullPointerException("Item must not be null");
+        }
 
         Link<T> newLink = new Link<>(newItem);
 
@@ -59,14 +71,16 @@ public class LinkedList<T> {
         count++;
     }
 
-    // Time Complexity: O(N)
+    // Inserts newItem so it ends up at the given index. index == size() adds it at the end.
+    // Throws IndexOutOfBoundsException if index is negative or greater than size().
+    // Time complexity: O(n), we walk from the head to the link just before index.
     public void insertAt(int index, T newItem) {
-        Objects.requireNonNull(newItem, "Item must not be null");
-
-        // Must account for the fact that we can insert at the end of the list (index == count)
-        // Remember that count - 1 == index is the last element
-        // So count == index is a valid position to insert
-        if (index < 0 || index > count) throw new IndexOutOfBoundsException("Index out of bounds. Valid range: 0 to " + count);
+        if (newItem == null) {
+            throw new NullPointerException("Item must not be null");
+        }
+        if (index < 0 || index > count) {
+            throw new IndexOutOfBoundsException("Index out of bounds. Valid range: 0 to " + count);
+        }
 
         if (index == 0) {
             insertFirst(newItem);
@@ -87,7 +101,8 @@ public class LinkedList<T> {
         count++;
     }
 
-    // Time Complexity: O(1)
+    // Removes the first item. Returns false if the list is empty.
+    // Time complexity: O(1), head just moves to the second link.
     public boolean deleteFirst() {
         if (head == null) return false;
 
@@ -104,7 +119,9 @@ public class LinkedList<T> {
         return true;
     }
 
-    // Time Complexity: O(N)
+    // Removes the last item. Returns false if the list is empty.
+    // Time complexity: O(n), a singly linked list can't go backwards, so we have to walk
+    // from the head to find the link before the tail.
     public boolean deleteLast() {
         if (head == null) return false;
 
@@ -127,7 +144,8 @@ public class LinkedList<T> {
         return true;
     }
 
-    // Time Complexity: O(N)
+    // Removes the item at the given index. Returns false if index is out of range.
+    // Time complexity: O(n), we walk from the head to the link just before index.
     public boolean deleteAt(int index) {
         if (index < 0 || index >= count) {
             return false;
@@ -149,9 +167,12 @@ public class LinkedList<T> {
         return true;
     }
 
-    // Time Complexity: O(N)
+    // Removes the first link holding key. Returns false if key isn't in the list.
+    // Time complexity: O(n), we may have to check every link before finding key.
     public boolean deleteKey(T key) {
-        Objects.requireNonNull(key, "Key must not be null");
+        if (key == null) {
+            throw new NullPointerException("Key must not be null");
+        }
 
         if (head == null) return false;
 
@@ -176,9 +197,12 @@ public class LinkedList<T> {
         return true;
     }
 
-    // Time Complexity: O(N)
+    // Returns the index of the first link holding key, or -1 if it isn't in the list.
+    // Time complexity: O(n), we may have to check every link.
     public int find(T key) {
-        Objects.requireNonNull(key, "Key must not be null");
+        if (key == null) {
+            throw new NullPointerException("Key must not be null");
+        }
 
         Link<T> current = head;
         for (int i = 0; current != null; i++) {
@@ -188,7 +212,8 @@ public class LinkedList<T> {
         return -1;
     }
 
-    // O(N) where N is the number of elements in the list
+    // Returns the items from head to tail, for example "1 -> 2 -> 3".
+    // Time complexity: O(n), each link is visited once.
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -203,7 +228,8 @@ public class LinkedList<T> {
         return sb.toString();
     }
 
-    // O(N) where N is the number of elements in the list
+    // Prints the items from head to tail, for example "LinkedList: Head [1 -> 2 -> 3] Tail".
+    // Time complexity: O(n), each link is visited once.
     public void display() {
         Link<T> current = head;
         System.out.print("LinkedList: Head [");
